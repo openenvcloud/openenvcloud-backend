@@ -1,0 +1,10 @@
+{
+    "development": {
+      "username": "ozeppo",
+      "password": "test123",
+      "database": "opendatamap",
+      "host": "192.168.0.16",
+      "dialect": "postgres"
+    }
+  }
+  
