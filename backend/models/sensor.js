@@ -1,4 +1,3 @@
-// models/sensor.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
@@ -20,9 +19,11 @@ const SensorData = sequelize.define('SensorData', {
     allowNull: true,
   },
   location: {
-    type: DataTypes.GEOGRAPHY,
+    type: DataTypes.STRING, // Możemy użyć STRING dla prostoty
     allowNull: true,
   },
+}, {
+  timestamps: true,
 });
 
 module.exports = SensorData;

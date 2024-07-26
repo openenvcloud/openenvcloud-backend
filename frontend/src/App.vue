@@ -1,12 +1,24 @@
 <template>
-    <div id="app">
-      <router-view></router-view>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'App',
-  };
-  </script>
-  
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/profile">Profile</router-link>
+      <router-link to="/login">Login</router-link>
+    </nav>
+    <router-view />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+};
+</script>
+
+<style>
+/* Stylizacja nawigacji */
+nav {
+  display: flex;
+  gap: 10px;
+}
+</style>
