@@ -14,8 +14,8 @@ app.use(bodyParser.json());
 const userRoutes = require('./routes/userRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
 
-app.use('/api/users', userRoutes);
-app.use('/api/auth', userRoutes);
+app.use('/api/users', userRoutes); // Option for user info. Just now for authorization too
+app.use('/api/auth', userRoutes); // Will create a new file with just auth routes like register, login or change password
 app.use('/api/sensors', sensorRoutes);
 
 app.listen(PORT, () => {

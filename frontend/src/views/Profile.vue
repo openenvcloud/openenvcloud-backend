@@ -25,16 +25,40 @@
         <h2>Sensors</h2>
         <ul>
           <li v-for="sensor in sensors" :key="sensor.id">
-            {{ sensor.name }} - {{ sensor.apiKey }}
+            <h3>{{ sensor.name }}</h3>
+            <div class="form-group">
+              <label>API Key</label>
+              <div class="api-key-container">
+                <input type="text" :value="sensor.apiKey" readonly>
+                <button @click="copyApiKey(sensor.apiKey)">Copy API Key</button>
+              </div>
+            </div>
+            <span class="delete-btn" @click="deleteApiKey(sensor.id)">Remove API Key</span>
           </li>
         </ul>
-        <button @click="generateApiKey">Generate New API Key</button>
+        <button @click="openAddSensorPopup">+ Add new sensor</button>
+      </div>
+  
+      <!-- Popup do dodawania sensora -->
+      <div v-if="showAddSensorPopup" class="popup">
+        <div class="popup-content">
+          <h2>Add New Sensor</h2>
+          <div class="form-group">
+            <label for="sensorName">Sensor Name</label>
+            <input type="text" id="sensorName" v-model="newSensorName" required>
+          </div>
+          <div id="popup-map" class="map"></div>
+          <button @click="addSensor">Add Sensor</button>
+          <button @click="closeAddSensorPopup">Cancel</button>
+        </div>
       </div>
     </div>
   </template>
   
   <script>
   import axios from 'axios';
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
   
   export default {
     data() {
@@ -43,12 +67,17 @@
         password: '',
         points: 0,
         profilePicture: 'https://via.placeholder.com/100',
-        sensors: []
+        sensors: [],
+        showAddSensorPopup: false,
+        newSensorName: '',
+        map: null,
+        marker: null,
+        selectedLocation: null
       };
     },
     async mounted() {
-      this.fetchProfile();
-      this.fetchSensors();
+      await this.fetchProfile();
+      await this.fetchSensors();
     },
     methods: {
       async fetchProfile() {
@@ -93,15 +122,70 @@
           console.error('Error updating profile:', error);
         }
       },
-      async generateApiKey() {
+      async deleteApiKey(sensorId) {
         const token = localStorage.getItem('token');
         try {
-          const response = await axios.post('http://localhost:5000/api/sensors/generate-api-key', {}, {
+          await axios.delete(`http://localhost:5000/api/sensors/${sensorId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          this.sensors = this.sensors.filter(sensor => sensor.id !== sensorId);
+        } catch (error) {
+          console.error('Error deleting API key:', error);
+        }
+      },
+      copyApiKey(apiKey) {
+        navigator.clipboard.writeText(apiKey).then(() => {
+          alert('API key copied to clipboard');
+        }).catch(err => {
+          console.error('Failed to copy API key: ', err);
+        });
+      },
+      openAddSensorPopup() {
+        this.showAddSensorPopup = true;
+        this.$nextTick(() => {
+          this.initMap();
+        });
+      },
+      closeAddSensorPopup() {
+        this.showAddSensorPopup = false;
+        this.map = null; // Reset map
+        this.marker = null;
+        this.selectedLocation = null;
+        this.newSensorName = ''; // Reset sensor name
+      },
+      initMap() {
+        this.map = L.map('popup-map').setView([50.0647, 19.9486], 13);
+  
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+        }).addTo(this.map);
+  
+        this.map.on('click', (e) => {
+          if (this.marker) {
+            this.map.removeLayer(this.marker);
+          }
+          this.marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
+          this.selectedLocation = `POINT(${e.latlng.lng} ${e.latlng.lat})`;
+        });
+      },
+      async addSensor() {
+        if (!this.newSensorName || !this.selectedLocation) {
+          alert('Please provide both a name and location for the sensor.');
+          return;
+        }
+  
+        const token = localStorage.getItem('token');
+        try {
+          const response = await axios.post('http://localhost:5000/api/sensors/create', {
+            name: this.newSensorName,
+            location: this.selectedLocation
+          }, {
             headers: { Authorization: `Bearer ${token}` }
           });
           this.sensors.push(response.data);
+          this.closeAddSensorPopup();
         } catch (error) {
-          console.error('Error generating API key:', error);
+          console.error('Error adding sensor:', error);
         }
       }
     }
@@ -129,6 +213,10 @@
   .profile-picture img {
     border-radius: 50%;
     margin-bottom: 10px;
+  }
+  
+  .profile-picture button {
+    margin-top: 10px;
   }
   
   .profile-details {
@@ -184,9 +272,89 @@
   
   .sensors li {
     background: #f5f5f5;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
+  }
+  
+  .sensors h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+  }
+  
+  .api-key-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .api-key-container input[readonly] {
+    background: #e0e0e0;
+    cursor: not-allowed;
+    flex: 1;
+  }
+  
+  .delete-btn {
+    color: red;
+    cursor: pointer;
+    margin-top: 5px;
+    font-size: 12px;
+  }
+  
+  .delete-btn:hover {
+    text-decoration: underline;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: left;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .popup-content h2 {
+    margin-top: 0;
+  }
+  
+  .popup-content .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .popup-content .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .popup-content .form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  
+  .popup-content .map {
+    height: 300px;
+    margin-bottom: 15px;
+  }
+  
+  .popup-content button {
+    margin-right: 10px;
+  }
+  
+  .popup-content button:last-child {
+    margin-right: 0;
   }
   </style>
   

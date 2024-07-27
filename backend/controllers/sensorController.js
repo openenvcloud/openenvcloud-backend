@@ -3,10 +3,9 @@ const Sensor = require('../models/sensor');
 const SensorData = require('../models/sensorData');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const { Op } = require('sequelize');
 const sequelize = require('../config/database');
 
-// Tworzenie nowego sensora
+// Create a new sensor
 exports.createSensor = async (req, res) => {
   try {
     const { name, location } = req.body;
@@ -19,7 +18,7 @@ exports.createSensor = async (req, res) => {
   }
 };
 
-// Pobieranie sensorów użytkownika
+// Request all user sensors
 exports.getSensors = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -30,7 +29,7 @@ exports.getSensors = async (req, res) => {
   }
 };
 
-// Pobieranie danych z sensorów z różnymi filtrami
+// Request sensors data with filtering
 exports.getSensorData = async (req, res) => {
   try {
     const { location, sensorId, apiKey } = req.query;
@@ -57,10 +56,10 @@ exports.getSensorData = async (req, res) => {
   }
 };
 
-// Pobieranie najnowszych danych z sensorów
+// Request newest data from sensors
 exports.getLatestSensorData = async (req, res) => {
   try {
-    // Znajdź wszystkie sensory
+    // Find all sensors
     const sensors = await Sensor.findAll({
       include: [
         {
@@ -77,7 +76,7 @@ exports.getLatestSensorData = async (req, res) => {
         limit: 1
       });
 
-      // Usuwanie klucza API przed zwróceniem odpowiedzi
+      // Remove API key before response
       const sensorWithoutApiKey = {
         ...sensor.get({ plain: true }),
         apiKey: undefined
@@ -110,14 +109,19 @@ exports.getSensorDataByApiKey = async (req, res) => {
       return res.status(404).json({ message: 'Sensor not found' });
     }
 
-    const sensorData = await SensorData.findAll({ where: { sensorId: sensor.id } });
-    res.status(200).json(sensorData);
+    const response = {
+      "id": sensor.id,
+      "userId": sensor.userId,
+      "name": sensor.name,
+      "location": sensor.location
+    };
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching sensor data by API key', error });
   }
 };
 
-// Dodawanie danych sensora
+// Push sensor data to databse and add user a points
 exports.addSensorData = async (req, res) => {
   try {
     const { sensorId, temperature, humidity, airQuality } = req.body;
@@ -128,19 +132,21 @@ exports.addSensorData = async (req, res) => {
       return res.status(401).json({ message: 'Authorization header is missing' });
     }
 
-    const apiKey = authorizationHeader.split(' ')[1]; // Zakładamy, że nagłówek ma format "Bearer <api_key>"
+    const apiKey = authorizationHeader.split(' ')[1]; // For format "Bearer <api_key>"
     if (!apiKey) {
       return res.status(401).json({ message: 'API key is missing' });
     }
 
-    // Weryfikacja klucza API
+    // API Key verification
     const sensor = await Sensor.findOne({ where: { id: sensorId, apiKey } });
     if (!sensor) {
       return res.status(403).json({ message: 'Invalid API key or sensor ID' });
     }
 
+    const user = User.findOne({ where: {} })
+
     const pointsEarned = 1 + (temperature ? 2 : 0) + (humidity ? 2 : 0) + (airQuality ? 2 : 0);
-    await db.User.increment('points', { by: pointsEarned, where: { id: userId } });
+    await User.increment('points', { by: pointsEarned, where: { id: req.user.userId } });
 
     const sensorData = await SensorData.create({
       sensorId,

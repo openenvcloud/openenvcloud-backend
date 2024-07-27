@@ -7,8 +7,8 @@ const router = express.Router();
 router.post('/create', auth, createSensor);
 router.get('/', auth, getSensors);
 router.get('/data', auth, getSensorData); // Dodajemy różne trasy do filtrowania danych
-router.get('/latest', auth, getLatestSensorData);
-router.get('/by-api-key/:apiKey', auth, getSensorDataByApiKey);
+router.get('/latest', getLatestSensorData);
+router.get('/by-api-key/:apiKey', getSensorDataByApiKey);
 router.post('/data', auth, addSensorData); // Nowy endpoint do dodawania danych
 
 module.exports = router;
