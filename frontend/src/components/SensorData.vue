@@ -23,7 +23,7 @@
           return;
         }
   
-        const response = await axios.get('http://localhost:5000/api/sensors', {
+        const response = await axios.get('http://localhost:5000/api/sensors/latest', {
           headers: { Authorization: `Bearer ${token}` },
         });
   
@@ -44,10 +44,41 @@
           attribution: '© OpenStreetMap contributors',
         }).addTo(map);
   
+        const defaultIcon = L.icon({
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+  
         this.sensorData.forEach((data) => {
-          const [lat, lng] = data.location.split(','); // Zakładając, że dane lokalizacji są w formacie "lat,lng"
-          const marker = L.marker([lat, lng]).addTo(map);
-          marker.bindPopup(`<b>Temperature:</b> ${data.temperature}°C<br/><b>Humidity:</b> ${data.humidity}%<br/><b>Air Quality:</b> ${data.airQuality}`);
+          console.log('Adding marker for data:', data);
+          if (data.location) {
+            const match = data.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+            if (match) {
+              const lat = parseFloat(match[1]);
+              const lng = parseFloat(match[2]);
+              const marker = L.marker([lat, lng], { icon: defaultIcon }).addTo(map);
+  
+              // Pobieranie nazwy użytkownika i czasu aktualizacji
+              const user = data.User ? data.User.username : 'Unknown';
+              const updatedAt = new Date(data.updatedAt).toLocaleString();
+  
+              marker.bindPopup(
+                `<b>Temperature:</b> ${data.temperature}°C<br/>
+                 <b>Humidity:</b> ${data.humidity}%<br/>
+                 <b>Air Quality:</b> ${data.airQuality}<br/>
+                 <b>Updated:</b> ${updatedAt}<br/>
+                 <b>User:</b> ${user}`
+              );
+            } else {
+              console.error('Invalid location format:', data.location);
+            }
+          } else {
+            console.error('No location data:', data.location);
+          }
         });
       },
     },

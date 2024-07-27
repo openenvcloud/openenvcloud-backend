@@ -1,29 +1,27 @@
+// models/sensor.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const User = require('./user'); // Import modelu User, jeśli istnieje
 
-const SensorData = sequelize.define('SensorData', {
+const Sensor = sequelize.define('Sensor', {
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
   },
-  temperature: {
-    type: DataTypes.FLOAT,
-    allowNull: true,
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  humidity: {
-    type: DataTypes.FLOAT,
-    allowNull: true,
-  },
-  airQuality: {
-    type: DataTypes.FLOAT,
-    allowNull: true,
-  },
-  location: {
-    type: DataTypes.STRING, // Możemy użyć STRING dla prostoty
-    allowNull: true,
+  apiKey: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 }, {
   timestamps: true,
 });
 
-module.exports = SensorData;
+module.exports = Sensor;
