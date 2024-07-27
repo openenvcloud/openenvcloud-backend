@@ -69,23 +69,26 @@ exports.getLatestSensorData = async (req, res) => {
       ]
     });
 
-    const latestSensorData = await Promise.all(sensors.map(async (sensor) => {
+    let latestSensorData = [];
+
+    await Promise.all(sensors.map(async (sensor) => {
       const sensorData = await SensorData.findOne({
         where: { sensorId: sensor.id },
-        order: [['createdAt', 'DESC']],
-        limit: 1
+        order: [['createdAt', 'DESC']]
       });
 
-      // Remove API key before response
-      const sensorWithoutApiKey = {
-        ...sensor.get({ plain: true }),
-        apiKey: undefined
-      };
+      if (sensorData) {
+        // Remove API key before response
+        const sensorWithoutApiKey = {
+          ...sensor.get({ plain: true }),
+          apiKey: undefined
+        };
 
-      return {
-        sensor: sensorWithoutApiKey,
-        sensorData
-      };
+        latestSensorData.push({
+          sensor: sensorWithoutApiKey,
+          sensorData
+        });
+      }
     }));
 
     console.log('Fetched latest sensor data:', latestSensorData);

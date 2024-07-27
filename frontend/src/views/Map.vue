@@ -65,7 +65,7 @@
             const lat = parseFloat(match[1]);
             const lng = parseFloat(match[2]);
   
-            const marker = L.marker([lat, lng], { icon: defaultIcon }).addTo(map);
+            const marker = L.marker([lng, lat], { icon: defaultIcon }).addTo(map);
   
             const temperature = sensorData ? sensorData.temperature : 'N/A';
             const humidity = sensorData ? sensorData.humidity : 'N/A';

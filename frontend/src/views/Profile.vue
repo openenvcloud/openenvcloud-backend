@@ -25,7 +25,7 @@
         <h2>Sensors</h2>
         <ul>
           <li v-for="sensor in sensors" :key="sensor.id">
-            <h3>{{ sensor.name }}</h3>
+            <h3>{{ sensor.name }}</h3> <span>(id: {{sensor.id}})</span>
             <div class="form-group">
               <label>API Key</label>
               <div class="api-key-container">
@@ -159,12 +159,21 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© OpenStreetMap contributors',
         }).addTo(this.map);
+        
+        const defaultIcon = L.icon({
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
   
         this.map.on('click', (e) => {
           if (this.marker) {
             this.map.removeLayer(this.marker);
           }
-          this.marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
+          this.marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: defaultIcon }).addTo(this.map);
           this.selectedLocation = `POINT(${e.latlng.lng} ${e.latlng.lat})`;
         });
       },
