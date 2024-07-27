@@ -4,6 +4,8 @@ import router from './router';
 
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import vuetify from './plugins/vuetify'
+import './components/styles/main.css'
 
 // Fix Leaflet's default icon paths
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,4 +17,4 @@ L.Icon.Default.mergeOptions({
 });
 
 
-createApp(App).use(router).mount('#app');
+createApp(App).use(router).use(vuetify).mount('#app')

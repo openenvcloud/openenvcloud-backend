@@ -9,10 +9,10 @@ const sequelize = require('../config/database');
 // Tworzenie nowego sensora
 exports.createSensor = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, location } = req.body;
     const userId = req.user.id;
     const apiKey = jwt.sign({ userId, name }, process.env.API_KEY_SECRET, { expiresIn: '30d' });
-    const sensor = await Sensor.create({ userId, name, apiKey });
+    const sensor = await Sensor.create({ userId, name, apiKey, location });
     res.status(201).json(sensor);
   } catch (error) {
     res.status(500).json({ message: 'Error creating sensor', error });
@@ -60,21 +60,45 @@ exports.getSensorData = async (req, res) => {
 // Pobieranie najnowszych danych z sensorów
 exports.getLatestSensorData = async (req, res) => {
   try {
-    const latestSensorData = await sequelize.query(
-      `SELECT DISTINCT ON ("sensorId") *
-      FROM "SensorData"
-      ORDER BY "sensorId", "createdAt" DESC`,
-      {
-        model: SensorData,
-        mapToModel: true
-      }
-    );
+    // Znajdź wszystkie sensory
+    const sensors = await Sensor.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ['username']
+        }
+      ]
+    });
+
+    const latestSensorData = await Promise.all(sensors.map(async (sensor) => {
+      const sensorData = await SensorData.findOne({
+        where: { sensorId: sensor.id },
+        order: [['createdAt', 'DESC']],
+        limit: 1
+      });
+
+      // Usuwanie klucza API przed zwróceniem odpowiedzi
+      const sensorWithoutApiKey = {
+        ...sensor.get({ plain: true }),
+        apiKey: undefined
+      };
+
+      return {
+        sensor: sensorWithoutApiKey,
+        sensorData
+      };
+    }));
+
+    console.log('Fetched latest sensor data:', latestSensorData);
 
     res.status(200).json(latestSensorData);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching latest sensor data', error });
+    console.error('Error fetching latest sensor data:', error);
+    res.status(500).json({ message: 'Error fetching latest sensor data', error: error.message });
   }
 };
+
+
 
 // Pobieranie danych z sensorów na podstawie klucza API
 exports.getSensorDataByApiKey = async (req, res) => {
@@ -90,5 +114,41 @@ exports.getSensorDataByApiKey = async (req, res) => {
     res.status(200).json(sensorData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching sensor data by API key', error });
+  }
+};
+
+// Dodawanie danych sensora
+exports.addSensorData = async (req, res) => {
+  try {
+    const { sensorId, temperature, humidity, airQuality } = req.body;
+    
+    // Pobieranie klucza API z nagłówka Authorization
+    const authorizationHeader = req.headers['authorization'];
+    if (!authorizationHeader) {
+      return res.status(401).json({ message: 'Authorization header is missing' });
+    }
+
+    const apiKey = authorizationHeader.split(' ')[1]; // Zakładamy, że nagłówek ma format "Bearer <api_key>"
+    if (!apiKey) {
+      return res.status(401).json({ message: 'API key is missing' });
+    }
+
+    // Weryfikacja klucza API
+    const sensor = await Sensor.findOne({ where: { id: sensorId, apiKey } });
+    if (!sensor) {
+      return res.status(403).json({ message: 'Invalid API key or sensor ID' });
+    }
+
+    const sensorData = await SensorData.create({
+      sensorId,
+      temperature,
+      humidity,
+      airQuality,
+    });
+
+    res.status(201).json(sensorData);
+  } catch (error) {
+    console.error('Error adding sensor data:', error); // Dodajemy logowanie błędu do konsoli
+    res.status(500).json({ message: 'Error adding sensor data', error });
   }
 };

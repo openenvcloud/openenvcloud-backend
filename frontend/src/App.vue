@@ -1,24 +1,21 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/profile">Profile</router-link>
-      <router-link to="/login">Login</router-link>
-    </nav>
-    <router-view />
-  </div>
+  <v-app>
+    <Header />
+    <v-main>
+      <router-view />
+    </v-main>
+    <Footer />
+  </v-app>
 </template>
 
 <script>
-export default {
-  name: 'App',
-};
-</script>
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
 
-<style>
-/* Stylizacja nawigacji */
-nav {
-  display: flex;
-  gap: 10px;
+export default {
+  components: {
+    Header,
+    Footer
+  }
 }
-</style>
+</script>

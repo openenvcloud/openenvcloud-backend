@@ -1,0 +1,109 @@
+/* Reset stylów */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    color: #424242;
+  }
+  
+  /* Nagłówek */
+  .v-app-bar {
+    background-color: #1976D2 !important;
+    color: white;
+  }
+  
+  .v-toolbar-title {
+    font-weight: bold;
+  }
+  
+  .v-img {
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  /* Nawigacja */
+  .v-navigation-drawer {
+    background-color: #ffffff !important;
+  }
+  
+  .v-list-item {
+    color: #424242;
+  }
+  
+  .v-list-item:hover {
+    background-color: #e0e0e0 !important;
+  }
+  
+  /* Stopka */
+  .v-footer {
+    background-color: #1976D2 !important;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+  }
+  
+  /* Kontenery logowania i rejestracji */
+  .login-container, .register-container {
+    margin-top: 50px;
+  }
+  
+  .v-card {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .v-card-title {
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  .v-btn {
+    font-weight: bold;
+  }
+  
+  .v-alert {
+    margin-top: 20px;
+  }
+  
+  /* Strona główna z danymi sensorów */
+  .sensor-data-container {
+    padding-top: 20px;
+  }
+  
+  .map-container {
+    height: 400px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  
+  /* Ogólne style */
+  .text-center {
+    text-align: center;
+  }
+  
+  .mt-4 {
+    margin-top: 16px;
+  }
+  
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+  
+  /* Przycisk akcji */
+  .v-btn--primary {
+    background-color: #1976D2 !important;
+    color: white !important;
+  }
+  
+  .v-btn--primary:hover {
+    background-color: #1565C0 !important;
+  }
+  
