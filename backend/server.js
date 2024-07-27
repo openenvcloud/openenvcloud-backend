@@ -15,6 +15,7 @@ const userRoutes = require('./routes/userRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', userRoutes);
 app.use('/api/sensors', sensorRoutes);
 
 app.listen(PORT, () => {

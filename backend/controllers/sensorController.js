@@ -139,6 +139,9 @@ exports.addSensorData = async (req, res) => {
       return res.status(403).json({ message: 'Invalid API key or sensor ID' });
     }
 
+    const pointsEarned = 1 + (temperature ? 2 : 0) + (humidity ? 2 : 0) + (airQuality ? 2 : 0);
+    await db.User.increment('points', { by: pointsEarned, where: { id: userId } });
+
     const sensorData = await SensorData.create({
       sensorId,
       temperature,

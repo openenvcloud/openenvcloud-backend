@@ -18,7 +18,11 @@ const User = sequelize.define('User', {
   apiKey: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  points: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
 }, {
   timestamps: true,
 });

@@ -1,24 +1,23 @@
 <template>
-    <v-app-bar app color="primary" dark>
-      <v-img src="@/assets/logo.png" alt="Logo" contain max-width="40" class="mr-3"></v-img>
-      <v-toolbar-title>Open Data Map</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn v-if="!isAuthenticated" text @click="login">Login</v-btn>
-      <v-btn v-if="!isAuthenticated" text @click="register">Register</v-btn>
-      <v-menu v-else bottom left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn text v-bind="attrs" v-on="on">
-            {{ username }}
-            <v-icon right>mdi-menu-down</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item @click="logout">
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
+    <header class="header">
+      <div class="container">
+        <div class="logo">
+          <router-link to="/">Open Data Map</router-link>
+        </div>
+        <nav class="nav">
+          <ul>
+            <li><router-link to="/">Home</router-link></li>
+            <li><router-link to="/map">Map</router-link></li>
+            <li><router-link to="/stats">Stats</router-link></li>
+            <li><router-link to="/leaderboard">Leaderboard</router-link></li>
+            <li v-if="!isAuthenticated"><router-link to="/login-register">Login</router-link></li>
+            <li v-else><router-link to="/profile">Profile</router-link></li>
+            <li v-if="!isAuthenticated"><router-link to="/login-register">Register</router-link></li>
+            <li v-else><a href="#" @click.prevent="logout">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
   </template>
   
   <script>
@@ -33,34 +32,56 @@
         return !!localStorage.getItem('token');
       }
     },
-    mounted() {
-      if (this.isAuthenticated) {
-        // Fetch the username for the authenticated user
-        this.username = 'John Doe'; // Replace this with actual API call if needed
-      }
-    },
     methods: {
-      login() {
-        this.$router.push('/login');
-      },
-      register() {
-        this.$router.push('/register');
-      },
       logout() {
         localStorage.removeItem('token');
         this.username = '';
-        this.$router.push('/login');
+        this.$router.push('/');
       }
     }
   }
   </script>
   
   <style scoped>
-  .v-toolbar-title {
+  .header {
+    background-color: #1976D2;
+    color: white;
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .logo a {
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
     font-weight: bold;
   }
-  .v-img {
-    border-radius: 50%;
+  
+  .nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .nav a:hover {
+    text-decoration: underline;
   }
   </style>
   

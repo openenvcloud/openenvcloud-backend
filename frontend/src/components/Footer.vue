@@ -1,17 +1,27 @@
 <template>
-    <v-footer app padless>
-      <v-col class="text-center" cols="12">
+    <footer class="footer">
+      <div class="container">
         &copy; 2024 Open Data Map
-      </v-col>
-    </v-footer>
+      </div>
+    </footer>
   </template>
   
   <style scoped>
-  .v-footer {
-    background-color: #1976D2 !important;
+  .footer {
+    background-color: #1976D2;
     color: white;
     padding: 20px 0;
     text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
   }
   </style>
   

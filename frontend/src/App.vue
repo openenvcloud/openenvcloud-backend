@@ -1,11 +1,11 @@
 <template>
-  <v-app>
+  <div id="app">
     <Header />
-    <v-main>
+    <main>
       <router-view />
-    </v-main>
+    </main>
     <Footer />
-  </v-app>
+  </div>
 </template>
 
 <script>
@@ -19,3 +19,23 @@ export default {
   }
 }
 </script>
+
+<style>
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+main {
+  padding-top: 60px; /* wysokość nagłówka */
+  padding-bottom: 60px; /* wysokość stopki */
+  flex: 1;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+</style>
