@@ -4,6 +4,7 @@ const SensorData = require('../models/sensorData');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const sequelize = require('../config/database');
+const { Op } = require('sequelize');
 
 // Create a new sensor
 exports.createSensor = async (req, res) => {
@@ -162,5 +163,42 @@ exports.addSensorData = async (req, res) => {
   } catch (error) {
     console.error('Error adding sensor data:', error); // Dodajemy logowanie błędu do konsoli
     res.status(500).json({ message: 'Error adding sensor data', error });
+  }
+};
+
+exports.getSensorHistory = async (req, res) => {
+  try {
+    const { sensorId } = req.params;
+    const sensorData = await SensorData.findAll({
+      where: { sensorId },
+      order: [['createdAt', 'ASC']]
+    });
+
+    res.status(200).json(sensorData);
+  } catch (error) {
+    console.error('Error fetching sensor history:', error);
+    res.status(500).json({ message: 'Error fetching sensor history', error: error.message });
+  }
+};
+
+exports.searchSensors = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ message: 'Query parameter is required' });
+    }
+
+    const sensors = await Sensor.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${query}%`
+        }
+      }
+    });
+
+    res.status(200).json(sensors);
+  } catch (error) {
+    console.error('Error searching sensors:', error);
+    res.status(500).json({ message: 'Error searching sensors', error: error.message });
   }
 };
