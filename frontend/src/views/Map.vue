@@ -8,6 +8,7 @@
   import axios from 'axios';
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
+  import moment from 'moment';
   
   export default {
     data() {
@@ -70,7 +71,7 @@
             const temperature = sensorData ? sensorData.temperature : 'N/A';
             const humidity = sensorData ? sensorData.humidity : 'N/A';
             const airQuality = sensorData ? sensorData.airQuality : 'N/A';
-            const updatedAt = sensorData ? new Date(sensorData.createdAt).toLocaleString() : 'N/A';
+            const updatedAt = sensorData ? moment(sensorData.createdAt).fromNow() : 'N/A';
             const user = sensor.User ? sensor.User.username : 'Unknown';
   
             marker.bindPopup(
