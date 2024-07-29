@@ -1,4 +1,5 @@
 # OpenDataCloud
+## (Temporary project name)
 
 OpenDataCloud is an open-source platform that allows users to share data from their sensors, creating a global database of statistical information. The project aims to support independent scientific research and other initiatives by providing open access to this data.
 

@@ -202,3 +202,26 @@ exports.searchSensors = async (req, res) => {
     res.status(500).json({ message: 'Error searching sensors', error: error.message });
   }
 };
+
+// Delete sensor and related data
+exports.deleteSensor = async (req, res) => {
+  try {
+    const { sensorId } = req.params;
+
+    // Find sensor
+    const sensor = await Sensor.findByPk(sensorId);
+    if (!sensor) {
+      return res.status(404).json({ message: 'Sensor not found' });
+    }
+
+    // Delete related sensor data
+    await SensorData.destroy({ where: { sensorId } });
+
+    // Delete sensor
+    await sensor.destroy();
+
+    res.status(200).json({ message: 'Sensor deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting sensor', error });
+  }
+};

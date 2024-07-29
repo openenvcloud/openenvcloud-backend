@@ -13,10 +13,11 @@ app.use(bodyParser.json());
 // Routes
 const userRoutes = require('./routes/userRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
+const authRoutes = require('./routes/authRoutes');
 
-app.use('/api/users', userRoutes); // Option for user info. Just now for authorization too
-app.use('/api/auth', userRoutes); // Will create a new file with just auth routes like register, login or change password
-app.use('/api/sensors', sensorRoutes);
+app.use('/api/users', userRoutes); // Routes for user info. Only public data.
+app.use('/api/auth', authRoutes); // Routes for account creating, loggin in or changing data on account.
+app.use('/api/sensors', sensorRoutes); // Routes for all sensors and sensors data.
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
