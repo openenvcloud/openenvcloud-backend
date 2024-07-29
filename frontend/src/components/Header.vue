@@ -2,7 +2,7 @@
     <header class="header">
       <div class="container">
         <div class="logo">
-          <router-link to="/">Open Data Map</router-link>
+          <router-link to="/">Open Data Cloud</router-link>
         </div>
         <nav class="nav">
           <ul>

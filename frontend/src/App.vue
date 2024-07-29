@@ -28,9 +28,8 @@ html, body, #app {
 }
 
 main {
-  padding-top: 60px; /* wysokość nagłówka */
-  padding-bottom: 60px; /* wysokość stopki */
   flex: 1;
+  margin-top: 48px;
 }
 
 #app {

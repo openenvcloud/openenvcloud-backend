@@ -14,37 +14,55 @@
       <button class="close-button" @click="selectedSensor = null">X</button>
       <h2>{{ selectedSensor.sensor.name }}</h2>
       <div class="sensor-detail">
-        <p><strong>User:</strong> {{ selectedSensor.sensor.User.username }}</p>
-        <p><strong>Updated:</strong> {{ moment(selectedSensor.sensorData.createdAt).fromNow() }}</p>
-        
-        <div>
-          <p @click="toggleDetail('temperature')">
-            <strong>Temperature:</strong> {{ selectedSensor.sensorData.temperature }}°C
+        <div class="sensor-item" @click="toggleDetail('temperature')">
+          <div class="sensor-item-header">
+            <div>
+              <font-awesome-icon icon="thermometer-half" />
+              <span>Temperature</span>
+            </div>
             <span v-if="details.temperature">▲</span>
             <span v-else>▼</span>
-          </p>
+          </div>
+          <div class="sensor-item-content">
+            <span class="sensor-item-value">{{ selectedSensor.sensorData.temperature }}°C</span>
+            <span class="sensor-item-timestamp">{{ moment(selectedSensor.sensorData.createdAt).fromNow() }}</span>
+          </div>
           <div v-if="details.temperature" class="data-container">
             <p v-for="(data, index) in sensorHistory.temperature" :key="index">{{ data.createdAt }} - {{ data.value }}°C</p>
           </div>
         </div>
 
-        <div>
-          <p @click="toggleDetail('humidity')">
-            <strong>Humidity:</strong> {{ selectedSensor.sensorData.humidity }}%
+        <div class="sensor-item" @click="toggleDetail('humidity')">
+          <div class="sensor-item-header">
+            <div>
+              <font-awesome-icon icon="tint" />
+              <span>Humidity</span>
+            </div>
             <span v-if="details.humidity">▲</span>
             <span v-else>▼</span>
-          </p>
+          </div>
+          <div class="sensor-item-content">
+            <span class="sensor-item-value">{{ selectedSensor.sensorData.humidity }}%</span>
+            <span class="sensor-item-timestamp">{{ moment(selectedSensor.sensorData.createdAt).fromNow() }}</span>
+          </div>
           <div v-if="details.humidity" class="data-container">
             <p v-for="(data, index) in sensorHistory.humidity" :key="index">{{ data.createdAt }} - {{ data.value }}%</p>
           </div>
         </div>
 
-        <div>
-          <p @click="toggleDetail('airQuality')">
-            <strong>Air Quality:</strong> {{ selectedSensor.sensorData.airQuality }}
+        <div class="sensor-item" @click="toggleDetail('airQuality')">
+          <div class="sensor-item-header">
+            <div>
+              <FontAwesomeIcon :icon="wind" />
+              <span>Air Quality</span>
+            </div>
             <span v-if="details.airQuality">▲</span>
             <span v-else>▼</span>
-          </p>
+          </div>
+          <div class="sensor-item-content">
+            <span class="sensor-item-value">{{ selectedSensor.sensorData.airQuality }} PM2.5</span>
+            <span class="sensor-item-timestamp">{{ moment(selectedSensor.sensorData.createdAt).fromNow() }}</span>
+          </div>
           <div v-if="details.airQuality" class="data-container">
             <p v-for="(data, index) in sensorHistory.airQuality" :key="index">{{ data.createdAt }} - {{ data.value }}</p>
           </div>
@@ -59,6 +77,7 @@ import axios from 'axios';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import moment from 'moment';
+
 
 export default {
   data() {
@@ -212,6 +231,7 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
+  margin-top: 60px;
 }
 
 .search-container input {
@@ -263,18 +283,51 @@ export default {
   margin-top: 20px;
 }
 
-.sensor-detail p {
-  margin: 10px 0;
+.sensor-item {
+  background: white;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
-.sensor-detail p strong {
-  display: inline-block;
-  width: 100px;
+.sensor-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sensor-item-header div {
+  display: flex;
+  align-items: center;
+}
+
+.sensor-item-header i {
+  margin-right: 10px;
+}
+
+.sensor-item-content {
+  margin-top: 10px;
+}
+
+.sensor-item-value {
+  display: block;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.sensor-item-timestamp {
+  display: block;
+  color: #888;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 .data-container {
   margin-top: 10px;
+  padding-left: 10px;
+  border-left: 2px solid #ccc;
 }
 
 .data-container p {
