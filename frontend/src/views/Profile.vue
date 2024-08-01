@@ -109,14 +109,14 @@ export default {
   methods: {
     async fetchUserData() {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/auth/profile', {
+      const response = await axios.get('https://api.openenvcloud.com/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.user = response.data;
     },
     async fetchSensors() {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/sensors', {
+      const response = await axios.get('https://api.openenvcloud.com/api/sensors', {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.sensors = response.data;
@@ -127,7 +127,7 @@ export default {
     },
     async removeApiKey(sensorId) {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/sensors/${sensorId}`, {
+      await axios.delete(`https://api.openenvcloud.com/api/sensors/${sensorId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.fetchSensors();
@@ -140,7 +140,7 @@ export default {
     },
     async updateProfile() {
       const token = localStorage.getItem('token');
-      await axios.patch('http://localhost:5000/api/auth/update-username', {
+      await axios.patch('https://api.openenvcloud.com/api/auth/update-username', {
         username: this.newUsername,
         password: this.password,
       }, {
@@ -151,7 +151,7 @@ export default {
     },
     async updatePassword() {
       const token = localStorage.getItem('token');
-      await axios.patch('http://localhost:5000/api/auth/update-password', {
+      await axios.patch('https://api.openenvcloud.com/api/auth/update-password', {
         oldPassword: this.oldPassword,
         newPassword: this.newPassword,
       }, {
@@ -204,7 +204,7 @@ export default {
 
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.post('http://localhost:5000/api/sensors/create', {
+        const response = await axios.post('https://api.openenvcloud.com/api/sensors/create', {
           name: this.newSensorName,
           location: this.selectedLocation
         }, {

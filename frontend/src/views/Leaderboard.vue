@@ -36,7 +36,7 @@
     methods: {
       async fetchLeaderboard() {
         try {
-          const response = await axios.get('http://localhost:5000/api/users/leaderboard');
+          const response = await axios.get('https://api.openenvcloud.com/api/users/leaderboard');
           this.leaderboard = response.data;
         } catch (error) {
           this.errorMessage = error.response ? error.response.data.message : error.message;

@@ -42,7 +42,7 @@ export default {
 
         this.errorMessage = null
 
-        const dataResponse = await axios.get('http://localhost:5000/api/sensors/latest', {
+        const dataResponse = await axios.get('https://api.openenvcloud.com/api/sensors/latest', {
           headers: { Authorization: `Bearer ${token}` },
         })
 

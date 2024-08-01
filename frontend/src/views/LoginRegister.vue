@@ -68,7 +68,7 @@ export default {
     async login() {
       try {
         this.loginError = null;
-        const response = await axios.post('http://localhost:5000/api/auth/login', this.loginForm);
+        const response = await axios.post('https://api.openenvcloud.com/api/auth/login', this.loginForm);
         localStorage.setItem('token', response.data.token);
         this.$emit('authChange');
         this.$router.push('/');
@@ -79,7 +79,7 @@ export default {
     async register() {
       try {
         this.registerError = null;
-        await axios.post('http://localhost:5000/api/auth/register', this.registerForm);
+        await axios.post('https://api.openenvcloud.com/api/auth/register', this.registerForm);
         this.registerSuccess = 'Successfully registered your account, now log in';
         this.registerForm.email = '';
         this.registerForm.username = '';

@@ -2,7 +2,7 @@
   <header class="header">
     <div class="container">
       <div class="logo">
-        <router-link to="/">Open Data Cloud</router-link>
+        <router-link to="/">OpenEnVCloud</router-link>
       </div>
       <nav class="nav">
         <ul>

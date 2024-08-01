@@ -61,7 +61,7 @@ export default {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5000/api/sensors/search?query=${this.searchQuery}`, {
+        const response = await axios.get(`https://api.openenvcloud.com/api/sensors/search?query=${this.searchQuery}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -83,7 +83,7 @@ export default {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5000/api/sensors/${this.selectedSensor.id}/history`, {
+        const response = await axios.get(`https://api.openenvcloud.com/api/sensors/${this.selectedSensor.id}/history`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
